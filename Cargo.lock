@@ -5,6 +5,7 @@ version = 3
 [[package]]
 name = "adbridger"
 version = "0.1.0"
+source = "git+https://github.com/suleymanlaarabi/adbridger-rs#0c93e0f43f994f32ce4034ba399879ca30794679"
 
 [[package]]
 name = "aho-corasick"
