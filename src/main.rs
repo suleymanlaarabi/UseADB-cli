@@ -22,6 +22,8 @@ fn main() {
         .about("A simple cli to use Android debug bridge");
 
     loop {
-        views::home(&mut device, &term, theme);
+        if !views::home(&mut device, &term, theme) {
+            break;
+        }
     }
 }
