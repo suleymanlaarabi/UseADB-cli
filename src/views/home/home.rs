@@ -9,9 +9,9 @@ use adbridger::struct_def::Device;
 use console::{style, Term};
 use dialoguer::{theme::ColorfulTheme, Select};
 
-use crate::views;
+use crate::views::{self, home::HomePages};
 
-pub fn home(device: &mut Device, term: &Term, theme: &ColorfulTheme) {
+pub fn home(device: &mut Device, term: &Term, theme: &ColorfulTheme) -> bool {
     let mut stdout = stdout();
 
     stdout
@@ -31,13 +31,15 @@ pub fn home(device: &mut Device, term: &Term, theme: &ColorfulTheme) {
 
     println!("\n{}\n", title_styled);
 
-    if device.device_id == "None" {
-        let select_device_title: console::StyledObject<&str> =
-            style("Please Select a device").bold().underlined().red();
-        println!("{}\n", select_device_title)
-    }
+    let select_device_page = HomePages::SelectDevice;
+    let use_adb_page: HomePages = HomePages::UseAdbPage;
+    let exit_page = HomePages::ExitPage;
 
-    let menu = vec!["Select device", "Use ADB"];
+    let mut menu = vec![select_device_page, use_adb_page, exit_page];
+
+    if device.device_id == "None" {
+        menu.remove(1);
+    }
 
     let selection = Select::with_theme(theme)
         .with_prompt("Select an option")
@@ -47,13 +49,31 @@ pub fn home(device: &mut Device, term: &Term, theme: &ColorfulTheme) {
 
     match selection {
         Ok(index) => match index {
-            Some(option) => match option {
-                0 => views::select_device::select_device(&theme, &term, device),
-                1 => views::useadb(device, theme, term),
-                _ => {}
-            },
-            None => println!("Please select an option"),
+            Some(option) => {
+                if menu[option].to_string() == HomePages::ExitPage.to_string() {
+                    return false;
+                }
+
+                match option {
+                    0 => {
+                        views::select_device::select_device(&theme, &term, device);
+                        true
+                    }
+                    1 => {
+                        views::useadb(device, theme, term);
+                        true
+                    }
+                    _ => false,
+                }
+            }
+            None => {
+                println!("Please select an option");
+                true
+            }
         },
-        Err(_) => println!("Please select an option"),
+        Err(_) => {
+            println!("Please select an option");
+            true
+        }
     }
 }
