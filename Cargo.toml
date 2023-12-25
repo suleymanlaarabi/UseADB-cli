@@ -6,8 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-adbridger = { path = "../adbridger" }
-
+adbridger = { git = "https://github.com/suleymanlaarabi/adbridger-rs" }
 clap = "*"
 dialoguer = "*"
 crossterm = "*"
